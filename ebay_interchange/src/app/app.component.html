@@ -1,0 +1,76 @@
+<div class="card">
+  <div class="card-header">
+    Search a car
+  </div>
+  <div class="card-body">      
+
+      <form id="passwordForm" class="text-center" (submit) = "searchCarSubmit()" [formGroup]="form_search">
+          <div class="row justify-content-center">
+            <div class="col-auto">
+              <div class="form-group">
+                <label for="year">Year</label>
+                <input formControlName="year" type="text" id="year" class="form-control" aria-describedby="passwordHelpInline" required>
+               
+              </div>
+            </div>
+            <div class="col-auto">
+              <div class="form-group">
+                <label for="make">Make</label>
+                <input formControlName="make" type="text" id="make" class="form-control" aria-describedby="passwordHelpInline" required>
+                
+              </div>
+            </div>
+            <div class="col-auto">
+              <div class="form-group">
+                <label for="model">Model</label>
+                <input formControlName="model" type="text" id="model" class="form-control" aria-describedby="passwordHelpInline" required>
+               
+              </div>
+            </div>
+            <div class="col-auto">
+              <div class="form-group">
+                <label for="model">Part</label>
+                <input formControlName="part" type="text" id="part" class="form-control" aria-describedby="passwordHelpInline" required>
+    
+              </div>
+            </div>
+          </div>
+          <div *ngIf="invalidForm()" class="alert alert-danger" role="alert">
+              Incomplete form
+            </div>
+            <div *ngIf="submitted()" class="alert alert-success" role="alert">
+              Searching Interchanges for {{queryStr}}
+            </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        
+       </div>
+       </div>
+
+
+       
+<div *ngIf="submitted()">
+<div *ngIf="!carModel">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+</div>
+
+  <div *ngFor="let model of carModel">
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title> {{model}} </mat-panel-title>
+        <mat-panel-description> Interchanges</mat-panel-description>
+      </mat-expansion-panel-header>
+      <div *ngFor="let listing of data[model].listings" class="card-body">
+        <h3>{{ listing.Title }}</h3>
+        <img [src]="listing.image" alt="{{ listing.Title }}" class="img-fluid" width="200" />
+        <p>Price: ${{ listing.price.toFixed(2) }}</p>
+        <a [href]="listing.href" target="_blank" class="btn btn-info">View on eBay</a>
+        </div>
+    </mat-expansion-panel>
+
+     
+        
+ 
+
