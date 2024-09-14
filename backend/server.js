@@ -1,5 +1,5 @@
 
-const { mainInterchange, compareTexts } = require('./helpers.js');
+const { suggestion, compareTexts, mainInterchange, retrieve_file_contents} = require('./helpers.js');
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require('body-parser');
@@ -25,7 +25,19 @@ app.get('/postData', async (req, res) => {
   part = req.query['part'];
   console.log(req.query);
   try{
-    mainInterchange(year, make, model, part, res);
+    suggestion(year, make, model, part, res);
+
+  }catch(error){}
+});
+app.get('/posteBay', async (req, res) => {
+  year = req.query['year'];
+  make = req.query['make'];
+  model = req.query['model'];
+  part = req.query['part'];
+  suggest = req.query['suggestion'];
+  console.log(req.query);
+  try{
+   await mainInterchange(year, make, model, part, suggest, res);
 
   }catch(error){}
 });
@@ -33,6 +45,9 @@ app.get('/postData', async (req, res) => {
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, IP_ADDRESS, () => {
 console.log(`Server is running on port ${PORT}.`);
+
+
+
 });
 
 // Example usage

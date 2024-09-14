@@ -18,4 +18,9 @@ export class DataService {
   postData(year : any, make : any, model : any, part: any): Observable<any>{
     return this.http.get<any>(`${this.url}/postData?year=${year}&make=${make}&model=${model}&part=${part}`, { responseType: 'text' as 'json' });
   }
+  posteBay(year : any, make : any, model : any, part: any, suggestion: any): Observable<any>{
+    return this.http.get<any>(`${this.url}/posteBay?year=${year}&make=${make}&model=${model}&part=${part}&suggestion=${suggestion}`, { responseType: 'text' as 'json' });
+
+
+  }
 }

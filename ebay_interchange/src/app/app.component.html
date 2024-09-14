@@ -9,32 +9,48 @@
             <div class="col-auto">
               <div class="form-group">
                 <label for="year">Year</label>
-                <input formControlName="year" type="text" id="year" class="form-control" aria-describedby="passwordHelpInline" required>
+                <input [value] = "year" formControlName="year" type="text"
+                 id="year" class="form-control" aria-describedby="passwordHelpInline" required>
                
               </div>
             </div>
             <div class="col-auto">
               <div class="form-group">
                 <label for="make">Make</label>
-                <input formControlName="make" type="text" id="make" class="form-control" aria-describedby="passwordHelpInline" required>
+                <input [value] = "make" formControlName="make" type="text" id="make" class="form-control" aria-describedby="passwordHelpInline" required>
                 
               </div>
             </div>
             <div class="col-auto">
               <div class="form-group">
                 <label for="model">Model</label>
-                <input formControlName="model" type="text" id="model" class="form-control" aria-describedby="passwordHelpInline" required>
+                <input [value] = "model" formControlName="model" type="text" id="model" class="form-control" aria-describedby="passwordHelpInline" required>
                
               </div>
             </div>
             <div class="col-auto">
               <div class="form-group">
-                <label for="model">Part</label>
-                <input formControlName="part" type="text" id="part" class="form-control" aria-describedby="passwordHelpInline" required>
+                <label for="part">Part</label>
+                <input [value] = "part" formControlName="part" type="text" id="part" class="form-control" aria-describedby="passwordHelpInline" required>
     
               </div>
             </div>
+            <div *ngIf="suggestions">
+            <div class="col-auto">
+              <div class="form-group">
+                <label for="Suggestions">Add specifications</label>
+                
+                <input formControlName="suggest" type="text" id="suggest" class="form-control" aria-describedby="passwordHelpInline" required>
+
+                    
+                    <div *ngFor="let x of suggestions">
+                      {{x}}
+                    </div>
+              </div>
+            </div>
+           </div>
           </div>
+          {{bob}}
           <div *ngIf="invalidForm()" class="alert alert-danger" role="alert">
               Incomplete form
             </div>
@@ -50,25 +66,26 @@
 
 
        
-<div *ngIf="submitted()">
-<div *ngIf="!carModel">
+<div *ngIf="submitted() && !ebayData">
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
-</div>
 
-  <div *ngFor="let model of carModel">
-    <mat-expansion-panel hideToggle>
+    <div *ngFor="let i of lenOfData">
+     <mat-expansion-panel hideToggle>
+
       <mat-expansion-panel-header>
-        <mat-panel-title> {{model}} </mat-panel-title>
+        <mat-panel-title> model </mat-panel-title>
         <mat-panel-description> Interchanges</mat-panel-description>
       </mat-expansion-panel-header>
-      <div *ngFor="let listing of data[model].listings" class="card-body">
-        <h3>{{ listing.Title }}</h3>
-        <img [src]="listing.image" alt="{{ listing.Title }}" class="img-fluid" width="200" />
+
+      <div *ngFor="let i of ebayData" class="card-body">
+        <h3>{{ i }}</h3>
+        <!-- <img [src]="listing.image" alt="{{ listing.Title }}" class="img-fluid" width="200" />
         <p>Price: ${{ listing.price.toFixed(2) }}</p>
-        <a [href]="listing.href" target="_blank" class="btn btn-info">View on eBay</a>
-        </div>
-    </mat-expansion-panel>
+        <a [href]="listing.href" target="_blank" class="btn btn-info">View on eBay</a> -->
+        </div> 
+   </mat-expansion-panel>
+   <!-- </div> -->
 
      
         
