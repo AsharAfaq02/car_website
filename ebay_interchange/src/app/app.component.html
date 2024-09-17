@@ -50,7 +50,6 @@
             </div>
            </div>
           </div>
-          {{bob}}
           <div *ngIf="invalidForm()" class="alert alert-danger" role="alert">
               Incomplete form
             </div>
@@ -64,30 +63,28 @@
        </div>
        </div>
 
-
+       <div *ngIf="err" class="alert alert-danger" role="alert">
+       {{err}}
+     </div>
        
-<div *ngIf="submitted() && !ebayData">
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-</div>
+       <div *ngIf="submitted() && !ebayData">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+      
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let model of ebayData">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ model }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div *ngFor="let item of carModel[model]">
+            <h3>{{ item.title }}</h3>
+            <img [src]="item.imageUrl" alt="{{ item.title }}" width="300">
+            <p>Price: {{ item.price }}</p>
+            <a [href]="item.listingURL" target="_blank">View Listing</a>
+          </div>
 
-    <div *ngFor="let i of lenOfData">
-     <mat-expansion-panel hideToggle>
-
-      <mat-expansion-panel-header>
-        <mat-panel-title> model </mat-panel-title>
-        <mat-panel-description> Interchanges</mat-panel-description>
-      </mat-expansion-panel-header>
-
-      <div *ngFor="let i of ebayData" class="card-body">
-        <h3>{{ i }}</h3>
-        <!-- <img [src]="listing.image" alt="{{ listing.Title }}" class="img-fluid" width="200" />
-        <p>Price: ${{ listing.price.toFixed(2) }}</p>
-        <a [href]="listing.href" target="_blank" class="btn btn-info">View on eBay</a> -->
-        </div> 
-   </mat-expansion-panel>
-   <!-- </div> -->
-
-     
-        
- 
-
+        </mat-expansion-panel>
+      </mat-accordion>
+    

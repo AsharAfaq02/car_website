@@ -21,10 +21,9 @@ export class AppComponent implements OnInit{
   carModel:any;
   base_model:any;
   queryStr:any;
-  bob:any;
+  err:any;
   suggest:any;
   ebayData: any;
-  lenOfData:any;
   
   constructor(private fb: FormBuilder, private dataService: DataService){
     
@@ -63,6 +62,7 @@ export class AppComponent implements OnInit{
    .subscribe(
 
     (response: any) => {
+      
       response = JSON.parse(response)['suggestions'];
       console.log(JSON.stringify(response));
       this.suggestions = response;
@@ -77,21 +77,33 @@ else{
   .subscribe(
 
     (response: string) => {
+     if(JSON.parse(response)['key'] == 'nodata'){
+      this.err = 'This request could not be completed, check for errors, and try again.'
+     }
+     else{
       
-      console.log(JSON.stringify(response))
-         
-        this.lenOfData = JSON.parse(response).length
-        this.ebayData = JSON.parse(response);
-          
+      const modelCollection: { [key: string]: any[] } = {};
+
+      // Process each listing
+      JSON.parse(response).listings.forEach((listing: any) => {
+        listing.model.forEach((item: any) => {
+          const modelName = item.model;
+          if (!modelCollection[modelName]) {
+            modelCollection[modelName] = [];
+          }
+          modelCollection[modelName].push(item);
+        });
+      });
+  
+            this.carModel = modelCollection;
+            this.ebayData =  Object.keys(modelCollection);
+    }
         },
         (error) =>
           console.error("error fetching data", error)
       )
        this.form_search.reset()
-    }
-    
-  this.bob =  this.year +' '+ this.make +' '+ this.model +' '+ this.part +' '+this.suggest;
-  
+    }  
   }
 }
    

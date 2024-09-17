@@ -9,6 +9,9 @@ import {
   TemplatePortal
 } from "./chunk-MQIC5GHT.js";
 import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-3564KZD4.js";
+import {
   MAT_FORM_FIELD,
   MatFormField
 } from "./chunk-XQIIPKDF.js";
@@ -20,9 +23,6 @@ import {
   transition,
   trigger
 } from "./chunk-AZJ62KUO.js";
-import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-3564KZD4.js";
 import {
   ActiveDescendantKeyManager,
   DOWN_ARROW,

@@ -2,9 +2,7 @@ const fs = require('fs');
 const OpenAI = require("openai");
 const openai = new OpenAI({apiKey: process.env.OPENAI_API_KEY})
 const { Worker } = require('worker_threads');
-const worker_ebay = new Worker('./worker_ebay.js');
 
-const path = require('path');
 
 async function suggestion(year, make, model, part, httpResponse){
   try{
@@ -19,9 +17,10 @@ async function getSuggestions(year,make,model,part){
    
     try{
       console.log('fetching suggestions from chatGPT')
-      content_string = "return a list of specific general suggestions to add to the end of an ebay search for "+part+".\
-      Make the suggestions generic attributes of color, kit, specific part of the "+part+", etc.\
-      Just print a list and nothing else. No numbering or lettering.";
+      content_string = 
+      "Return a list of part suggestions to append to an eBay search query for the item described as "+year+" "+make+" "+model+" "+part+".\
+      The suggestions should include generic attributes such as color, kit, or specific components. Make sure to lisr searches relevant to\
+      the year of the car as well Output only the list of suggestions, with no additional text, numbering, or letters.";
   
       const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -33,22 +32,23 @@ async function getSuggestions(year,make,model,part){
       gpt_array = gpt_output.split(',')
       console.log(gpt_array);
       return gpt_array;
-    } catch (error) {
+      } catch (error) {
       console.error("Error in partGPT:", error);
     }
   }
 async function partGPT(year, make, model, part) {
-  
     let vehicle = make+' '+model;
+    let failed = true;
+    while (failed){
     try{
       console.log('fetching interchanges from ChatGPT...')
       content_string = "use the following format in JSON: \
       {\
-      interchange_base: {part: "+ part +"\
+      interchange_base: \
+      {part: "+ part +"\
       car_model: "+vehicle+"\
       car_year: "+year+ " },\
       compatible_with:\
-      [\
       {\
         car_year:\
         car_brand:\
@@ -58,13 +58,18 @@ async function partGPT(year, make, model, part) {
       }\
       Follow the following rules strictly: \
       In interchage_base, insert the "+year+" "+vehicle+" "+part+".\
-      Then, in the compatible_with key, insert the a reasonable year, brand, and model of different car companies that use the same exact "+part+" design as the "+year+" "+vehicle+".\
-      Make the first entry is the "+year+" "+vehicle+" "+part+".\
-      Make sure car_year is of type integer. Return a list of 10 cars.\
-      Do not allow repeats. Make sure your response is a JSON file.\
-      Make sure the car year is no greater than .\
-      You only print a JSON file and nothing else, no extra tags or quotations.";
-  
+      Then, in the compatible_with section, list 10 different cars \
+      that have the same manufacturer just for the specified part, and the also use a part that is practically identical and installable in either vehicle.\
+      The first entry in this list should be the same as the interchange_base details.\
+      For each of the other 9 cars, provide:\
+      'car_year' The year of the compatible car (must be an integer).\
+      'car_brand': The brand of the compatible car.\
+      'car_model': The model of the compatible car.\
+      Constraints:\
+      No Repeats: Ensure that there are no duplicate cars in the compatible_with list.\
+      Car Year: The car_year of each compatible car should not be greater than the year specified in interchange_base.\
+      Response Format: Provide only the JSON object as specified. Do not include any extra text, tags, or quotations. Write perfect JSON object that is parseable."
+
       const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
@@ -74,45 +79,61 @@ async function partGPT(year, make, model, part) {
       { "role": "user", "content": content_string }
       ]});
       gpt_output = completion.choices[0].message['content']
+      if(gpt_output){
+        failed = false;
+      }
       return JSON.parse(gpt_output);
     } catch (error) {
+      failed = true;
+      console.log(error)
+      
     }
   }
-async function ebay_search(ebaySearchPrompt, part, information){
+  }
+async function ebay_search(ebaySearchPrompt, part,information){
     try{
     let prompt = ebaySearchPrompt+" "+part;
     let url = 'https://api.ebay.com/buy/browse/v1/item_summary/search?q='+prompt+'&limit=10';
     let response = await fetch(url, 
     {
       headers: {
-        'Authorization':'Bearer v^1.1#i^1#I^3#f^0#r^0#p^1#t^H4sIAAAAAAAAAOVYW2wUVRje7W4LyC0ComkwLANaUjKzZ2YvszvpLll6Y5PSLuy2hUYlszNn22nnss6cZbsQY1OTJj55SUAJt1JEhMQIPohcFKMGQmIsEKM++ACBBnjQEBSEYIhnZpeyrQSQbmIT92Vz/vOf/3zfd/7/nDMH9FVMqx5YOfDnTPuUssE+0Fdmt9PTwbSK8mWzHGWV5TZQ5GAf7FvS5+x3XKkxeEVOc2ugkdZUA7p6FVk1OMsYIjK6ymm8IRmcyivQ4JDAxSOrmjiGAlxa15AmaDLhitaFCFEQkkwQAt7v8wvegA9b1XsxE1qIYH1QCLIB6GH8AsOILO43jAyMqgbiVRQiGMB4SRAkaW8CsJzPzwGWYjzBDsLVBnVD0lTsQgEibMHlrLF6EdaHQ+UNA+oIByHC0UhDvCUSratvTtS4i2KFCzrEEY8yxthWrSZCVxsvZ+DDpzEsby6eEQRoGIQ7nJ9hbFAucg/ME8C3pGZ4lg3SKRYCAYgBLyyJlA2arvDo4ThMiySSKcuVgyqSUO5RimI1kt1QQIVWMw4RrXOZf6szvCylJKiHiPoVkXWRWIwIR4wuXo+keDIhKVDGIpKxNXWkJwhAUoA+QKYwYw/P+AsT5aMVZB43U62mipIpmuFq1tAKiFHD8dp4i7TBTi1qC54cmYiK/YKjGjId5qLmVzGDulRzXaGChXBZzUevwOhohHQpmUFwNML4DkuiEMGn05JIjO+0crGQPr1GiOhCKM253dlslsp6KE3vdDMA0O61q5riQhdUeAL7mrWe95cePYCULCoCzi3sz6FcGmPpxbmKAaidRNgHPB4GFHQfCys83voPQxFn99iKKFWFsH7og8kkAAHRA3DelKJCwoUkdZs4YJLPkQqv90CUlnkBkgLOs4wCdUnkPL4U4wmkICn6gynSG0ylyKRP9JN0CkIAMSwhGPg/FcrjpnocCjpEJcn1kuW5GOt+tV2QmtpoRazfGE90xTpWdKvtWkaLrWleJrV2R0EjCPo3JteuCj1uNTyQfK0sYWUSeP5SCGDWeulEWKkZCIoTohcXtDSMabIk5CbXAnt0McbrKBeHsowNEyIZSaejpdmrS0bvX24TT8a7dGfUf3Q+PZCVYabs5GJljjdwAD4tUeYJRAma4jZrXePx9cM0r7dQT4i3hG+uk4o1JplnK4n5Kydl0aWMDQKlQ0PL6Pi2TbWYN7CE1gNVfJ4hXZNlqLfRE65nRckgPinDyVbYJUhwiZ9khy3NMn4PAD4/OyFegnWUrp9sW1IptmJn4xNeq91jP/LDNutH99u/Bv32L8vsdlADXqAXg0UVjlanY0alISFISXyKMqROFX+76pDqgbk0L+llc23XhzavrK2sb9lSvSmRO7PtlG1G0RvD4MvgudFXhmkOenrRkwNYcL+nnJ797EzGC4K0F7A+P2A7wOL7vU56vnPevKXR099nWj+5dGH5savHD11Y8GZ4K5g56mS3l9uc/XZbbMeR8Lu77c/vn7O+irt0oLV2JHRi3/H+hhOn9uz/6retL/548aVbd36hDv6UXVR+do74bS2Zmn9j6mz50I7LIwe6P3it8uquL87+cGfd7KMJtGH3XNehp/oaq5/+tOyvxUuHB85Lrzdmz0/V+7Up1z4KJVjx9Cs9h3vYmnXH4lv2f7ZRXSic9NeN3Pjm3CbH3u3vLww1/PzG9ey1dtb9Ie9P7x06eKSKCJ/0phY88/a5i1r19qFBdPB2feeFDts+Z7tqG27YdfPm1cQB2553mu6urvr8VvUJr2945MqSnR9Xue+eAe8dbaxYPsc9pffX3YeVWZe9v/9REdj5luN2Fbl5E7o1fGXg6HdDNfm1/BveLjC2/REAAA==',
+        'Authorization':'Bearer v^1.1#i^1#f^0#p^1#r^0#I^3#t^H4sIAAAAAAAAAOVYf2wTVRxv90sIbEZBwMFCOSD8vPbdXdu1x1rtfuAq21pp2eaMzuvd63rb/Sj3XtkKicxFMP4jMQpBDWYB4yQZIUQnCSJRMEESEn/EH5hokBiiICaMP5h/LMR3XRndJICsiUu8NOnd933f930+n/f9vvfuQG/JzNU763eOlFofKOjvBb0FViszC8wsKV5TVlhQXmwBOQ7W/t5lvUV9hb9XIUFVkvxGiJK6hqCtR1U0xGeMPiplaLwuIBnxmqBCxGORjwQaG3jWDvikoWNd1BXKFqz1UZyT4xjgAU7Rw3mZSo5YtZsxo7qPgnEQh07RG3c5hRjnYUg7QikY1BAWNOyjWMA6aeClmcooADz5udx2l9PTRtmaoYFkXSMudkD5M3D5TF8jB+udoQoIQQOTIJQ/GFgfCQWCtXVN0SpHTix/VocIFnAKTXyq0SVoaxaUFLzzMCjjzUdSoggRohz+sREmBuUDN8HcB/yM1G7gBJzgckoeySmxXCwvUq7XDVXAd8ZhWmSJjmdceahhGafvpihRI9YJRZx9aiIhgrU28++plKDIcRkaPqquOvB0IBym/AGUEIxAXKCjsgoVIiId3lhLc14AYiJ0ATouAokTWHd2oLFoWZknjVSja5JsioZsTTquhgQ1zNHGHWU53pWjDXEKaSEyODYR5WrIjmvItJmTOjaLKZzQzHmFKhHClnm8+wyM98bYkGMpDMcjTG7ISOSjhGRSlqjJjZlczKZPD/JRCYyTvMPR3d1t7+bsutHhYAFgHK2NDRExAVWBIr5mrY/5y3fvQMsZKiIkPZHM43SSYOkhuUoAaB2U3wU4jgVZ3SfC8k+2/sOQw9kxsSLyVSECCysrhRgLOZbcOfNRIP5sjjpMGDAmpGlVMLogTiqCCGmRpFlKhYYs8ZwrznKeOKQltzdOO73xOB1zSW6aiUMIIIzFRK/n/1Qn95rpESgaEOcl1fOW5lK4c3OLKDc0M6pUtzUSTYTbqju1Fj2lhzc2rZE3dQbBE8Dr3hprbfTdazHclnyNIhNlomT86Vfr9TrCUJoSvYioJ2FYV2QxPb0mmDOksGDgdAQqCjFMiWQgmQzmZ6nOG71/uUzcH+/8bVH/0fZ0W1bITNnpxcrsj0gAISnbzR3ILuqqQzdrXSCnD9PcnkE9Jd4yObhOK9aE5BhbWRo7cdp1k64dbRHtBkR6yiCHbXvIPIBF9S6okf0MG7qiQKOZmXI9q2oKCzEFTrfCzkOCy8I022yZStbt4hjWNbXlSMxspe3TbUnKy1JctP7+TtWOie/4fkvmYvqsJ0Gf9USB1QqqwHJmKVhSUripqHB2OZIxtMtC3I7kDo28uhrQ3gXTSUE2CuZYru3fXV9TXhfas3pbNP3V26cts3M+MfQ/CxaMf2SYWcjMyvniABbdailmHpxfyjqBl6kE5HK528DSW61FzLyiuW/oL+///txFPEglRi5vO1B34/nBQ6B03MlqLbYU9VktzJvppoV75r2qVgR2oWuXmh6pe+9w1/yhhYflQ7O/fey59gPPWBd9fXXzmdLRvRt+inWspLpCx4eu/NXaO1qhfkQX/LHaOGKd+9KOM97tJacfH2bKzm1ZFqJKFnNX6DIw4+Qr1Q+Hzq94f3Tu1Tm/7NuU/mE4ceG3b9IVx90jH1iOSn9+vG7HideVzlOjrRt+LlAvdzy0quXJwy8ogxWpRadXDTrah6+W7N36Wd3ZkWvO61XLrge+W1v844qBy+9cwm992XiwZah+4coG9tiMfQeDG3ourn20f6jvkw9fO3UDWyrK2cRA1fLFzX0DSxYMa0fpIzb8bnB7zbEv8Ixfy3YN+D+9fv7C2RfX7f58bC7/Bm7VI6/8EQAA',
         'X-EBAY-C-MARKETPLACE-ID':'EBAY_US',
         'X-EBAY-C-ENDUSERCTX':'affiliateCampaignId=<ePNCampaignId>,affiliateReferenceId=<referenceId>'
       }
     })
     response.json()
-    .then(data =>{
+    .then(async data =>{
       try{
         totals = data['total']
         if(totals == 0){}
         else{
+          await storeEbayData(information, prompt, data);
           
-          information[prompt] = data;
         }
+       
       }
       catch(error){}
     })
   } catch(error){}
   
   }
+async function storeEbayData(information, prompt, data){
+  information[prompt] = data;
+
+}
 async function mainInterchange(year,make,model,part,suggestion,res){
+  const worker_ebay = new Worker('./worker_ebay.js');
+
     let filename_OGmodel = '';
+    let parentData = {'listings':[]};
   try{
     let messagesSent = 0;
     let messagesCompleted = 0;
-    await partGPT(year, make, model, part + ' '+ suggestion)
-    .then(async data => {
-      filename_OGmodel = year+' '+make+' '+model+' '+part+' '+suggestion
+    let data = await partGPT(year, make, model, part + ' '+ suggestion);
+    if(data){
+      console.log(data)
+      filename_OGmodel = year+' '+make+' '+model+' '+part+' '+suggestion;
       filename_OGmodel = filename_OGmodel.replace(/ /g, '_');
       console.log("fetching eBay listings...")
         for(let x = 0; x < data['compatible_with'].length; x++){
@@ -122,66 +143,86 @@ async function mainInterchange(year,make,model,part,suggestion,res){
           let stream = ['ebay',ebaySearchPrompt, part + ' '+ suggestion, filename_OGmodel];
           worker_ebay.postMessage({ stream });
           messagesSent++;
+        
         }
-          worker_ebay.on('message', async (message) => {
+      }
+         worker_ebay.on('message', async (message) => {
             if (message.status === 'completed') {
               console.log('Confirmation from Worker:', message.stream);
               messagesCompleted++;
               if (messagesCompleted === messagesSent) {
                 console.log('All messages have been processed.');
-                await delay(1000)
                 console.log(filename_OGmodel);
-                retrieve_file_contents(filename_OGmodel, res);
-              }
+               await delay(1000)
+
+               
+               await retrieve_file_contents(year+' '+make+' '+model+' '+part+' '+suggestion, filename_OGmodel, parentData,worker_ebay,res);
+              
+            }
             }
           })
-        })
-          .catch(error => {
-            console.error('Error:', error);
-          });
+        
+          
     }catch(error){}
+
     
   }
-function retrieve_file_contents(filename,res){
-    let parentData = {'listings':[]};
+async function retrieve_file_contents(query, filename,parentData,worker_ebay,res){
     let dataFromEbay = {};
     if (fs.existsSync(`./searches/${filename}.json`)) {
       console.log(`./searches/${filename}.json`, ' exists.');
       fs.readFile("./searches/"+filename+".json",'utf8', async (err, s) => {
+        if(Object.entries(JSON.parse(s))[0][1].total <= 1 || Object.keys(s).length === 0){
+          res.send({key:'nodata'});
+          console.log("ebay search could not be completed");
+          await delay(1000);
+          fs.unlinkSync("./searches/"+filename+".json",'utf8');
+        }
+        else{
           let messagesSent = 0;
-          s = Object.entries(JSON.parse(s)).forEach(a=>{
-              dataFromEbay = {[a[0]] :[]};
-              Object.keys(Object.entries(a[1]['itemSummaries'])).forEach(key=>{
+          s = Object.entries(JSON.parse(s)).forEach(async a=>{
+              dataFromEbay = {'model':[]};
+             
+
+              
+              Object.keys(Object.entries(a[1]['itemSummaries'])).forEach(async key=>{
                 let title = a[1]['itemSummaries'][key]['title'];
                 let imageURL = a[1]['itemSummaries'][key]['image']['imageUrl'];
                 let price = a[1]['itemSummaries'][key]['price']['value'];
                 let listingURL = a[1]['itemSummaries'][key]['itemWebUrl'];
-                let listing_info = {title:title, imageUrl:imageURL, price:price, listingURL:listingURL};
-                dataFromEbay[a[0]].push(listing_info);
+                let listing_info = 
+                {
+                model: a[0] ,
+                title:title,
+                imageUrl:imageURL, 
+                price:price, 
+                listingURL:listingURL
+                };
+                dataFromEbay['model'].push(listing_info);
             });
-            parentData.listings.push(dataFromEbay);
 
-          });
-          console.log(parentData);
-          
-
-          Object.keys(parentData.listings).forEach(a=>{
-            Object.keys(parentData.listings[a]).forEach(b=>{
-              lenModelListings = Object.keys(parentData.listings[a][b]).length;
-              for(i = 0; i < lenModelListings; i++){
-                for(j = i + 1; j < lenModelListings; j++){
-                  let model = Object.keys(parentData.listings[a])
-                  let comp1 = parentData.listings[a][b][i].title
-                  let comp2 = parentData.listings[a][b][j].title
+        parentData.listings.push(dataFromEbay);
+        });
+      
+      
+   
+        console.log(parentData);
+          res.send(parentData);
+          Object.keys(parentData.listings).forEach(a=>{ 
+            lenListingsOfEachModel = Object.keys(parentData.listings[a].model).length
+              for(i = 0; i < lenListingsOfEachModel; i++){
+                // for(j = i + 1; j < lenListingsOfEachModel; j++){
+                  let model = parentData.listings[a].model[i].model
+                  let comp1 = query;
+                  let comp2 = parentData.listings[a].model[i].title;
                   let comparisonQuery = ['comparison', JSON.stringify(model), comp1, comp2]
                   worker_ebay.postMessage( comparisonQuery );
                   messagesSent++
-                }
-              }
+                // }
+              } 
             })
-          })
+   
           let messagesCompleted = 0;
-
           worker_ebay.on('message', (message) => {
             if (message.status == 'completed comparison') {
                 console.log('Confirmation from Worker:', message.status);
@@ -189,20 +230,13 @@ function retrieve_file_contents(filename,res){
                 if (messagesCompleted === messagesSent) {
                     console.log('All messages have been processed.');
                     worker_ebay.terminate();
-                    Object.keys(require.cache).forEach(function(key){
-                      delete require.cache[key];
-                    
-                    })
-                    
                   }
               }
           })
+        }
       })
-  
-
     
-
-        
+  
   } else {
       console.error('File does not exist.');
   }
@@ -230,7 +264,7 @@ async function compareTexts(model,pair) {
     }
   //   console.log(sims)
   
-    }
+  }
 async function getEmbedding(text) {
 
     const embedding = await openai.embeddings.create({
@@ -262,4 +296,4 @@ function delay(ms) {
   }
 
 
-  module.exports = { suggestion, compareTexts, ebay_search, mainInterchange,retrieve_file_contents,delay};
+  module.exports = { suggestion, compareTexts, ebay_search, mainInterchange,retrieve_file_contents,delay, storeEbayData};
