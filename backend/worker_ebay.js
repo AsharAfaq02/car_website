@@ -1,7 +1,7 @@
 // worker_ebay.js
 const { parentPort } = require('worker_threads');
 const fs = require('fs');
-const {ebay_search,compareTexts, delay} = require('./helpers')
+const {ebay_search,compareTexts} = require('./helpers')
 
 const searches = {};
 parentPort.on('message', async (data) => {

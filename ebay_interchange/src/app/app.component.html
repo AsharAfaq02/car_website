@@ -3,7 +3,6 @@
     Search a car
   </div>
   <div class="card-body">      
-
       <form id="passwordForm" class="text-center" (submit) = "searchCarSubmit()" [formGroup]="form_search">
           <div class="row justify-content-center">
             <div class="col-auto">
@@ -11,80 +10,61 @@
                 <label for="year">Year</label>
                 <input [value] = "year" formControlName="year" type="text"
                  id="year" class="form-control" aria-describedby="passwordHelpInline" required>
-               
+                </div>
               </div>
-            </div>
             <div class="col-auto">
               <div class="form-group">
                 <label for="make">Make</label>
                 <input [value] = "make" formControlName="make" type="text" id="make" class="form-control" aria-describedby="passwordHelpInline" required>
-                
               </div>
             </div>
-            <div class="col-auto">
-              <div class="form-group">
-                <label for="model">Model</label>
-                <input [value] = "model" formControlName="model" type="text" id="model" class="form-control" aria-describedby="passwordHelpInline" required>
-               
-              </div>
+          <div class="col-auto">
+            <div class="form-group">
+              <label for="model">Model</label>
+              <input [value] = "model" formControlName="model" type="text" id="model" class="form-control" aria-describedby="passwordHelpInline" required>
             </div>
-            <div class="col-auto">
-              <div class="form-group">
-                <label for="part">Part</label>
-                <input [value] = "part" formControlName="part" type="text" id="part" class="form-control" aria-describedby="passwordHelpInline" required>
-    
-              </div>
-            </div>
-            <div *ngIf="suggestions">
-            <div class="col-auto">
-              <div class="form-group">
-                <label for="Suggestions">Add specifications</label>
-                
-                <input formControlName="suggest" type="text" id="suggest" class="form-control" aria-describedby="passwordHelpInline" required>
-
-                    
-                    <div *ngFor="let x of suggestions">
-                      {{x}}
-                    </div>
-              </div>
-            </div>
-           </div>
           </div>
-          <div *ngIf="invalidForm()" class="alert alert-danger" role="alert">
-              Incomplete form
+        <div class="col-auto">
+          <div class="form-group">
+            <label for="part">Part</label>
+            <input [value] = "part" formControlName="part" type="text" id="part" class="form-control" aria-describedby="passwordHelpInline" required>
+          </div>
+        </div>
+        <div *ngIf="suggestions">
+          <div class="col-auto">
+            <div class="form-group">
+              <label for="Suggestions">Add specifications</label>
+              <input formControlName="suggest" type="text" id="suggest" class="form-control" aria-describedby="passwordHelpInline" required>  
+              <div *ngFor="let x of suggestions">
+                {{x}}
+              </div>
             </div>
-            <div *ngIf="submitted()" class="alert alert-success" role="alert">
-              Searching Interchanges for {{queryStr}}
-            </div>
+          </div>
+        </div>
+      </div>
+       <div *ngIf="invalidForm()" class="alert alert-danger" role="alert">Incomplete form</div>
+         <div *ngIf="submitted()" class="alert alert-success" role="alert">Searching Interchanges for {{queryStr}}</div>
           <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-
-        
-       </div>
-       </div>
-
-       <div *ngIf="err" class="alert alert-danger" role="alert">
-       {{err}}
-     </div>
-       
+          </form>
+          </div>
+        </div>
+      <div *ngIf="err" class="alert alert-danger" role="alert">
+            {{err}}
+      </div>
        <div *ngIf="submitted() && !ebayData">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       </div>
-      
       <mat-accordion>
         <mat-expansion-panel *ngFor="let model of ebayData">
           <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{ model }}
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <div *ngFor="let item of carModel[model]">
-            <h3>{{ item.title }}</h3>
-            <img [src]="item.imageUrl" alt="{{ item.title }}" width="300">
-            <p>Price: {{ item.price }}</p>
-            <a [href]="item.listingURL" target="_blank">View Listing</a>
-          </div>
-
-        </mat-expansion-panel>
-      </mat-accordion>
+            <mat-panel-title>{{ model }}</mat-panel-title>
+            </mat-expansion-panel-header>
+              <div *ngFor="let item of carModel[model]"><h3>{{ item.title }}</h3>
+                <img [src]="item.imageUrl" alt="{{ item.title }}" width="300">
+                <p>Price: {{ item.price }}</p>
+                <a [href]="item.listingURL" target="_blank">View Listing</a>
+              </div>
+          </mat-expansion-panel>
+        </mat-accordion>
     
+{{comparisonData}}

@@ -1,5 +1,5 @@
 
-const { suggestion, compareTexts, mainInterchange, retrieve_file_contents} = require('./helpers.js');
+const { suggestion, mainInterchange} = require('./helpers.js');
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require('body-parser');
@@ -16,7 +16,11 @@ const openai = new OpenAI({apiKey: process.env.OPENAI_API_KEY})
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Ashars Backend application." });
-  });
+});
+app.get("/token", (req, res) => {
+res.json({message: "stuff"})
+console.log(req.query)
+});
 
 app.get('/postData', async (req, res) => {
   year = req.query['year'];
@@ -38,16 +42,11 @@ app.get('/posteBay', async (req, res) => {
   console.log(req.query);
   try{
    await mainInterchange(year, make, model, part, suggest, res);
-
   }catch(error){}
 });
+
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, IP_ADDRESS, () => {
 console.log(`Server is running on port ${PORT}.`);
-
-
-
 });
-
-// Example usage

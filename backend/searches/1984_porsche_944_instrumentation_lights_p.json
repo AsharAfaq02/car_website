@@ -1,0 +1,101 @@
+{
+  "1981 Mercedes-Benz 280CE instrumentation lights p": {
+    "errors": [
+      {
+        "errorId": 1100,
+        "domain": "ACCESS",
+        "category": "REQUEST",
+        "message": "Access denied",
+        "longMessage": "Insufficient permissions to fulfill the request."
+      }
+    ]
+  },
+  "1979 Volkswagen Scirocco instrumentation lights p": {
+    "errors": [
+      {
+        "errorId": 1100,
+        "domain": "ACCESS",
+        "category": "REQUEST",
+        "message": "Access denied",
+        "longMessage": "Insufficient permissions to fulfill the request."
+      }
+    ]
+  },
+  "1983 Audi Quattro instrumentation lights p": {
+    "errors": [
+      {
+        "errorId": 1100,
+        "domain": "ACCESS",
+        "category": "REQUEST",
+        "message": "Access denied",
+        "longMessage": "Insufficient permissions to fulfill the request."
+      }
+    ]
+  },
+  "1984 porsche 944 instrumentation lights p": {
+    "errors": [
+      {
+        "errorId": 1100,
+        "domain": "ACCESS",
+        "category": "REQUEST",
+        "message": "Access denied",
+        "longMessage": "Insufficient permissions to fulfill the request."
+      }
+    ]
+  },
+  "1984 Volkswagen Golf instrumentation lights p": {
+    "errors": [
+      {
+        "errorId": 1100,
+        "domain": "ACCESS",
+        "category": "REQUEST",
+        "message": "Access denied",
+        "longMessage": "Insufficient permissions to fulfill the request."
+      }
+    ]
+  },
+  "1978 Jaguar XJ-S instrumentation lights p": {
+    "errors": [
+      {
+        "errorId": 1100,
+        "domain": "ACCESS",
+        "category": "REQUEST",
+        "message": "Access denied",
+        "longMessage": "Insufficient permissions to fulfill the request."
+      }
+    ]
+  },
+  "1983 Ford Thunderbird instrumentation lights p": {
+    "errors": [
+      {
+        "errorId": 1100,
+        "domain": "ACCESS",
+        "category": "REQUEST",
+        "message": "Access denied",
+        "longMessage": "Insufficient permissions to fulfill the request."
+      }
+    ]
+  },
+  "1980 BMW 320i instrumentation lights p": {
+    "errors": [
+      {
+        "errorId": 1100,
+        "domain": "ACCESS",
+        "category": "REQUEST",
+        "message": "Access denied",
+        "longMessage": "Insufficient permissions to fulfill the request."
+      }
+    ]
+  },
+  "1982 Ferrari 308 GTS instrumentation lights p": {
+    "errors": [
+      {
+        "errorId": 1100,
+        "domain": "ACCESS",
+        "category": "REQUEST",
+        "message": "Access denied",
+        "longMessage": "Insufficient permissions to fulfill the request."
+      }
+    ]
+  }
+}
