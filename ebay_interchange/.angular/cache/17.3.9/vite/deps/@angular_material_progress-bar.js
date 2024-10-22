@@ -1,9 +1,9 @@
 import {
   MatCommonModule
-} from "./chunk-IL4K3ZDQ.js";
+} from "./chunk-TSH3QZDT.js";
 import {
   DOCUMENT
-} from "./chunk-URRIVNNM.js";
+} from "./chunk-QNJBFMAX.js";
 import {
   ANIMATION_MODULE_TYPE,
   ChangeDetectionStrategy,
@@ -39,7 +39,8 @@ import {
   ɵɵelementStart,
   ɵɵstyleProp,
   ɵɵtemplate
-} from "./chunk-65RQ7QZ7.js";
+} from "./chunk-IPXDSTDQ.js";
+import "./chunk-MAWJEL6W.js";
 
 // node_modules/@angular/material/fesm2022/progress-bar.mjs
 function MatProgressBar_Conditional_2_Template(rf, ctx) {

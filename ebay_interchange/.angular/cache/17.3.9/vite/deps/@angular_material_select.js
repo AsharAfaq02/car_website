@@ -1,14 +1,23 @@
 import {
   CdkConnectedOverlay,
   CdkOverlayOrigin,
-  CdkScrollableModule,
   Overlay,
-  OverlayModule,
+  OverlayModule
+} from "./chunk-AX5KQW32.js";
+import {
+  CdkScrollableModule,
   ViewportRuler
-} from "./chunk-WV7BCKPW.js";
+} from "./chunk-TALGJ53L.js";
+import "./chunk-RJ24U65B.js";
 import {
   SelectionModel
-} from "./chunk-MQIC5GHT.js";
+} from "./chunk-SXFEQHKU.js";
+import {
+  FormGroupDirective,
+  NgControl,
+  NgForm,
+  Validators
+} from "./chunk-26H4TAVC.js";
 import {
   MAT_FORM_FIELD,
   MatError,
@@ -19,13 +28,7 @@ import {
   MatLabel,
   MatPrefix,
   MatSuffix
-} from "./chunk-XQIIPKDF.js";
-import {
-  FormGroupDirective,
-  NgControl,
-  NgForm,
-  Validators
-} from "./chunk-3564KZD4.js";
+} from "./chunk-JHM4KLJU.js";
 import {
   animate,
   animateChild,
@@ -34,7 +37,7 @@ import {
   style,
   transition,
   trigger
-} from "./chunk-AZJ62KUO.js";
+} from "./chunk-IU6UPJVO.js";
 import {
   A,
   ActiveDescendantKeyManager,
@@ -59,11 +62,11 @@ import {
   addAriaReferencedId,
   hasModifierKey,
   removeAriaReferencedId
-} from "./chunk-IL4K3ZDQ.js";
+} from "./chunk-TSH3QZDT.js";
 import {
   CommonModule,
   NgClass
-} from "./chunk-URRIVNNM.js";
+} from "./chunk-QNJBFMAX.js";
 import {
   Attribute,
   ChangeDetectionStrategy,
@@ -83,22 +86,12 @@ import {
   Optional,
   Output,
   Self,
-  Subject,
   ViewChild,
   ViewEncapsulation$1,
   booleanAttribute,
-  defer,
-  distinctUntilChanged,
-  filter,
   inject,
-  map,
-  merge,
   numberAttribute,
   setClassMetadata,
-  startWith,
-  switchMap,
-  take,
-  takeUntil,
   ɵɵInputTransformsFeature,
   ɵɵNgOnChangesFeature,
   ɵɵProvidersFeature,
@@ -134,7 +127,19 @@ import {
   ɵɵtext,
   ɵɵtextInterpolate,
   ɵɵviewQuery
-} from "./chunk-65RQ7QZ7.js";
+} from "./chunk-IPXDSTDQ.js";
+import {
+  Subject,
+  defer,
+  distinctUntilChanged,
+  filter,
+  map,
+  merge,
+  startWith,
+  switchMap,
+  take,
+  takeUntil
+} from "./chunk-MAWJEL6W.js";
 
 // node_modules/@angular/material/fesm2022/select.mjs
 var _c0 = ["trigger"];

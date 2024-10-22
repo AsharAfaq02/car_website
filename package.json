@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "ag-grid-angular": "29.0",
+    "ag-grid-community": "29.0",
+    "ag-grid-react": "^32.2.2",
     "axios": "^1.7.7",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
@@ -7,6 +10,7 @@
     "express": "^4.21.0",
     "fs": "^0.0.1-security",
     "openai": "^4.62.0",
+    "stream": "^0.0.3",
     "worker-thread": "^1.1.0"
   }
 }

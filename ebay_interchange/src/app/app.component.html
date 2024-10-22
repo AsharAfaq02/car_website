@@ -54,17 +54,48 @@
        <div *ngIf="submitted() && !ebayData">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       </div>
+
+      
+        <div  *ngIf="alertComparison.length > 0">
+            <div  (click)="onDivClick()">
+              <mat-accordion>
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title style = "color: blue;">Top 10 Matches</mat-panel-title>
+                    </mat-expansion-panel-header>
+
+           <div *ngFor="let s of alertComparison">
+            <a>Title: {{s.title}}</a><br>
+            <img [src] = "s.imageUrl" width="100px"><br>
+            <a [href] = "s.itemHref">Link</a><br>
+            <a>Price: {{s.priceValue}} {{s.priceCurrency}}</a><br>
+
+          </div>
+
+        </mat-expansion-panel>
+      </mat-accordion>
+        </div>
+    </div>
+
+
+      <div *ngIf="ebayData_1">
+        
+      <div  (click)="onDivClick()">
       <mat-accordion>
-        <mat-expansion-panel *ngFor="let model of ebayData">
+        <mat-expansion-panel *ngFor="let data of ebayData_1">
           <mat-expansion-panel-header>
-            <mat-panel-title>{{ model }}</mat-panel-title>
+            <mat-panel-title>{{ data.title }}</mat-panel-title>
             </mat-expansion-panel-header>
-              <div *ngFor="let item of carModel[model]"><h3>{{ item.title }}</h3>
-                <img [src]="item.imageUrl" alt="{{ item.title }}" width="300">
-                <p>Price: {{ item.price }}</p>
-                <a [href]="item.listingURL" target="_blank">View Listing</a>
-              </div>
+            <div *ngFor="let element of data.info.itemSummaries">
+             
+              <a>Title: {{element.title}}</a><br>
+              <img [src] = "element.image.imageUrl" width="100px"><br>
+              <a [href] = "element.itemHref">Link</a><br>
+              <a>Price: {{element.price.value}} {{element.price.currency}}</a><br>
+          </div>
           </mat-expansion-panel>
         </mat-accordion>
-    
-{{comparisonData}}
+        </div>
+        </div>
+        
+
