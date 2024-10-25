@@ -47,8 +47,8 @@ car_model:\
 }\
 Follow the following rules strictly: \
 In interchage_base, insert the "+year+" "+vehicle+" "+part+".\
-Then, in the compatible_with section, accurately list cars from different brands\
-that use the same Original Equipment Manufacturer and Part Number for the "+part+" as the "+year+" "+vehicle+". \
+Then, in the compatible_with section, only list cars from different brands and companies\
+that use an identical "+part+" as the "+year+" "+vehicle+". \
 The first entry in this list should be the same as the interchange_base details.\
 For each of the other 9 cars, provide:\
 'car_year': The year of the compatible car (must be an integer).\
@@ -60,9 +60,9 @@ Car Year: The car_year of each compatible car should not be greater than the cur
 Response Format: Provide only the JSON object as specified. Do not include any extra text, tags, or quotations. Write perfect JSON object that is parseable."
 
     const completion = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o-mini",
     messages: [
-    { "role": "system", "content": "find cars from different brands that use the  Original Equipment Manufacturer and Part Number for the "+part+" in as the "+year+" "+vehicle+". The part should be able to be installed in the "+year+" "+vehicle+"." },
+    { "role": "system", "content": "find cars from different brands that only use the identical "+part+" as in the "+year+" "+vehicle+"." },
     { "role": "user", "content": content_string }
     ]});
     gpt_output = completion.choices[0].message['content']
@@ -114,7 +114,6 @@ async function mainInterchange(year, make, model, part, suggestion) {
 
   worker.on("message", (result) => {
 
-      // console.log(result[2])
       if (result[3] == "done") {
           msRecieved++;
       }

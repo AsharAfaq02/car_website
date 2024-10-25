@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { RouterOutlet } from '@angular/router';
 import {NgFor, NgForOf, NgIf} from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClientModule, provideHttpClient, withFetch} from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -42,6 +42,7 @@ import { MatTableModule } from '@angular/material/table';
   providers: [
     provideClientHydration(),
     provideAnimationsAsync(),
+    provideHttpClient(withFetch())
     
   ],
   bootstrap: [AppComponent]

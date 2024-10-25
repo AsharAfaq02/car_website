@@ -69,24 +69,33 @@ export class AppComponent implements OnInit {
                       this.subscription.unsubscribe();
                   }
                   this.subscription = this.dataService.posteBay(this.form_search.value.year, this.form_search.value.make, this.form_search.value.model, this.form_search.value.part, this.form_search.value.suggest).subscribe(data => {
-                          if (data['message'] == 'end of stream') {} else if (data['title']) {
+
+                    if (data['message'] == 'end of stream') {
+                            this.ebayUpdated();
+                            return;
+
+                          } else if (data['title']) {
                               this.ebayData_1.push(data)
                               Object(data.info.itemSummaries).forEach((element: any) => {
                                   this.ebayData.push({
                                       title: element.title,
-                                      itemHref: element.itemHref,
+                                      itemWebUrl: element.itemWebUrl,
                                       imageUrl: element.image.imageUrl,
                                       priceValue: element.price.value,
                                       priceCurrency: element.price.currency
                                   });
+
                               })
                               this.ebayUpdated();
+                              return;
 
                           } else if (data['comparison']) {
                               Object(this.ebayData).forEach((element: any) => {
                                   if (data.comparison == element.title) {
                                       element.comp = data.similiarity;
                                       this.comparisonData.push(element)
+                                      
+
                                   }
                               })
                           } else if (data['comparisonMessg'] == 'end of comparisons') {
@@ -94,6 +103,7 @@ export class AppComponent implements OnInit {
                               uniqueList.sort((a, b) => b.comp - a.comp)
                               this.alertComparison = uniqueList.slice(0, 10)
                               this.comparisonUpdated()
+                              return;
                           }
                       },
                       (error) => console.error("error fetching data", error));
@@ -107,7 +117,8 @@ export class AppComponent implements OnInit {
   }
   ebayUpdated() {
       this.cdr.detectChanges(); // Replace this with any function you want to perform 
-  }
+      }
+
   comparisonUpdated() {
       this.cdr.detectChanges(); // Replace this with any function you want to perform 
       this.cdr.detach();

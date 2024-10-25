@@ -67,7 +67,7 @@
            <div *ngFor="let s of alertComparison">
             <a>Title: {{s.title}}</a><br>
             <img [src] = "s.imageUrl" width="100px"><br>
-            <a [href] = "s.itemHref">Link</a><br>
+            <a [href] = "s.itemWebUrl" target="_blank">Link</a><br>
             <a>Price: {{s.priceValue}} {{s.priceCurrency}}</a><br>
 
           </div>
@@ -90,7 +90,7 @@
              
               <a>Title: {{element.title}}</a><br>
               <img [src] = "element.image.imageUrl" width="100px"><br>
-              <a [href] = "element.itemHref">Link</a><br>
+              <a [href] = "element.itemWebUrl" target="_blank">Link</a><br>
               <a>Price: {{element.price.value}} {{element.price.currency}}</a><br>
           </div>
           </mat-expansion-panel>

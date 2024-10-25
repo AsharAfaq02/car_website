@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
 export class DataService {
 
   private dataUrl = 'assets/full_ebay_exchanges.json';  // Path to your JSON file
-  private url = "http://localhost:8080";
-  private streamURL = 'http://localhost:8081'
+  private url = "http://10.0.0.50:8080";
+  private streamURL = 'http://10.0.0.50:8081'
   constructor(private http: HttpClient){}
 
   getInfo(){
