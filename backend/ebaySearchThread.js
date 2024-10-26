@@ -19,16 +19,12 @@ async function ebay_search(build, part) {
     let token = await ebay_token();
     try {
         let prompt = build + " " + part;
-        let url =
-            "https://api.ebay.com/buy/browse/v1/item_summary/search?q=" +
-            prompt +
-            "&limit=10";
+        let url = "https://api.ebay.com/buy/browse/v1/item_summary/search?q=" + prompt + "&limit=10";
         let response = await fetch(url, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "X-EBAY-C-MARKETPLACE-ID": "EBAY_US",
-                "X-EBAY-C-ENDUSERCTX":
-                    "affiliateCampaignId=<ePNCampaignId>,affiliateReferenceId=<referenceId>",
+                "X-EBAY-C-ENDUSERCTX": "affiliateCampaignId=<ePNCampaignId>,affiliateReferenceId=<referenceId>",
             },
         });
         return response.json();
@@ -40,7 +36,6 @@ parentPort.on("message", async (data) => {
     let mainQuery = data[2];
     await ebay_search(data[0], data[1]).then((data) => {
         totals = data["total"];
-
         if (totals == 0) {
             parentPort.postMessage([entry, "no-data", mainQuery, "done"]);
         } else if (totals > 0) {

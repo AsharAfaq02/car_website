@@ -1,30 +1,8 @@
-const fs = require('fs');
 const OpenAI = require("openai");
 const openai = new OpenAI({apiKey: process.env.OPENAI_API_KEY})
 const { Worker } = require('worker_threads');
-
 const myEmitter = require('./myEmitter');
 
-async function suggestion(year, make, model, part, httpResponse){
-  try{
-      console.log('fetching suggestions from chatGPT')
-      content_string = 
-"Return a list of 6 single word part suggestions to append to an eBay search query for the item described as "+year+" "+make+" "+model+" "+part+".\
-The suggestions should include generic attributes such as color, kit, specific components, or area of install. Make sure to list searches relevant to\
-the year of the car as well Output only the list of suggestions, with no additional text, numbering, or letters.";  
-      const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-      { "role": "system", "content": "You return suggestions to make a query about car parts more specific" },
-      { "role": "user", "content": content_string }
-      ]});
-      gpt_output = completion.choices[0].message['content'];
-      gpt_array = gpt_output.split(',')  
-      gpt_array = {'suggestions': gpt_array}
-      httpResponse.send(gpt_array);
-    
-    }catch(error){}
-}
 
 async function partGPT(year, make, model, part) {
   let vehicle = make+' '+model;
@@ -78,6 +56,28 @@ Response Format: Provide only the JSON object as specified. Do not include any e
 }
 }
 
+async function suggestion(year, make, model, part){
+    try{
+        console.log('fetching suggestions from chatGPT')
+        content_string = 
+  "Return a list of 6 single word part suggestions to append to an eBay search query for the item described as "+year+" "+make+" "+model+" "+part+".\
+  The suggestions should include generic attributes such as color, kit, specific components, or area of install. Make sure to list searches relevant to\
+  the year of the car as well Output only the list of suggestions, with no additional text, numbering, or letters.";  
+        const completion = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+        { "role": "system", "content": "You return suggestions to make a query about car parts more specific" },
+        { "role": "user", "content": content_string }
+        ]});
+        gpt_output = await completion.choices[0].message['content'];
+        gpt_array = gpt_output.split(',')  
+        gpt_array = {'suggestions': gpt_array}
+
+        return gpt_array;
+      
+      }catch(error){}
+}
+  
 async function mainInterchange(year, make, model, part, suggestion) {
   let mainQuery = part + " " + suggestion;
   let msSent = 0;
@@ -104,53 +104,42 @@ async function mainInterchange(year, make, model, part, suggestion) {
                   part + " " + suggestion,
                   mainQuery,
               ];
-
               worker.postMessage(dataToEbayThread);
-
               msSent++;
           }
       }
   } catch (error) {}
 
   worker.on("message", (result) => {
-
-      if (result[3] == "done") {
-          msRecieved++;
-      }
-      myEmitter.emit("event", result);
-
+    if (result[3] == "done") {
+        msRecieved++;
+    }
+    myEmitter.emit("event", result);
       if (result[1].itemSummaries) {
           Object(result[1].itemSummaries).forEach((element) => {
               comparisonWorker.postMessage([result[2], element.title]);
-
               msComparisonSent++;
           });
       }
       if (msSent == msRecieved) {
           myEmitter.emit("event", "end of stream");
-
           setTimeout(() => {
               worker.terminate();
-
               msSent = 0;
               msRecieved = 0;
           }, 1000);
       }
   });
 
-  comparisonWorker.on("message", (result) => {
-      myEmitter.emit("comparisons", result[0]);
-
+comparisonWorker.on("message", (result) => {
+myEmitter.emit("comparisons", result[0]);
       if (result[1] == "done") {
           msComparisonRecieved++;
       }
-
       if (msComparisonSent == msComparisonRecieved) {
           myEmitter.emit("comparisons", "end of comparisons");
-
           setTimeout(() => {
               comparisonWorker.terminate();
-
               msComparisonRecieved = 0;
               msComparisonSent = 0;
           }, 1000);

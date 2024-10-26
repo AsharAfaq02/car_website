@@ -6,27 +6,16 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DataService {
-
-  private dataUrl = 'assets/full_ebay_exchanges.json';  // Path to your JSON file
-  private url = "http://10.0.0.50:8080";
   private streamURL = 'http://10.0.0.50:8081'
   constructor(private http: HttpClient){}
 
-  getInfo(){
-    return this.http.get(this.dataUrl);
+  getSuggestions(year : any, make : any, model : any, part: any): Observable<any>{
+    return this.http.get<any>(`${this.streamURL}/suggestions?year=${year}&make=${make}&model=${model}&part=${part}`, { responseType: 'text' as 'json' });
   }
 
-  getEbayStream(){
-    return this.http.get<any>(this.streamURL);
-  }
-
-  postData(year : any, make : any, model : any, part: any): Observable<any>{
-    return this.http.get<any>(`${this.url}/postData?year=${year}&make=${make}&model=${model}&part=${part}`, { responseType: 'text' as 'json' });
-  }
-
-  posteBay(year : any, make : any, model : any, part: any, suggestion: any): Observable<any>{
+  geteBaySearch(year : any, make : any, model : any, part: any, suggestion: any): Observable<any>{
     return new Observable(observer => {
-      const evtSource = new EventSource(`${this.streamURL}/posteBay?year=${year}&make=${make}&model=${model}&part=${part}&suggestion=${suggestion}`);
+      const evtSource = new EventSource(`${this.streamURL}/ebaySearch?year=${year}&make=${make}&model=${model}&part=${part}&suggestion=${suggestion}`);
       evtSource.onmessage = function(event) {
         const dataEbay = JSON.parse(event.data);
         if(dataEbay){
@@ -40,8 +29,5 @@ export class DataService {
         }
     };
   })
-  }
-  getComparisons(){
-    return this.http.get<any>(`${this.url}/postSims`);
   }
 }

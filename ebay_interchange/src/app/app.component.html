@@ -51,7 +51,7 @@
       <div *ngIf="err" class="alert alert-danger" role="alert">
             {{err}}
       </div>
-       <div *ngIf="submitted() && !ebayData">
+       <div *ngIf=" suggestions && ebayData_1.length < 1 && submitted()">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       </div>
 

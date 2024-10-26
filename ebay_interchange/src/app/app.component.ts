@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
           this.form_validator = false;
           this.submitted_validator = true;
           if (!this.suggestions) {
-              this.dataService.postData(this.year, this.make, this.model, this.part).subscribe(
+              this.dataService.getSuggestions(this.year, this.make, this.model, this.part).subscribe(
                   (response: any) => {
                       response = JSON.parse(response)['suggestions'];
                       this.suggestions = response;
@@ -68,7 +68,7 @@ export class AppComponent implements OnInit {
                   if (this.subscription) {
                       this.subscription.unsubscribe();
                   }
-                  this.subscription = this.dataService.posteBay(this.form_search.value.year, this.form_search.value.make, this.form_search.value.model, this.form_search.value.part, this.form_search.value.suggest).subscribe(data => {
+                  this.subscription = this.dataService.geteBaySearch(this.form_search.value.year, this.form_search.value.make, this.form_search.value.model, this.form_search.value.part, this.form_search.value.suggest).subscribe(data => {
 
                     if (data['message'] == 'end of stream') {
                             this.ebayUpdated();
@@ -86,6 +86,7 @@ export class AppComponent implements OnInit {
                                   });
 
                               })
+                            
                               this.ebayUpdated();
                               return;
 
@@ -116,15 +117,15 @@ export class AppComponent implements OnInit {
       }
   }
   ebayUpdated() {
-      this.cdr.detectChanges(); // Replace this with any function you want to perform 
+      this.cdr.detectChanges(); 
       }
 
   comparisonUpdated() {
-      this.cdr.detectChanges(); // Replace this with any function you want to perform 
+      this.cdr.detectChanges(); 
       this.cdr.detach();
   }
   onDivClick() {
-      this.cdr.detectChanges(); // Replace this with any function you want to perform 
+      this.cdr.detectChanges(); 
   }
   invalidForm() {
       return this.form_validator;
