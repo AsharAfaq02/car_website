@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DataService {
-  private streamURL = 'http://10.0.0.50:8081'
+  private streamURL = 'http://10.0.0.38:8081'
   constructor(private http: HttpClient){}
 
   getSuggestions(year : any, make : any, model : any, part: any): Observable<any>{

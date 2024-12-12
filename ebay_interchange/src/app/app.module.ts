@@ -14,6 +14,8 @@ import { MatInputModule } from '@angular/material/input';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatChipsModule } from '@angular/material/chips';
+
 
 @NgModule({
   declarations: [
@@ -35,7 +37,8 @@ import { MatTableModule } from '@angular/material/table';
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
-    MatTableModule
+    MatTableModule,
+    MatChipsModule
     
     
   ],

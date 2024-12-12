@@ -1,6 +1,6 @@
 const { suggestion, mainInterchange } = require("./helpers.js");
 
-const IP_ADDRESS = "10.0.0.50";
+const IP_ADDRESS = "10.0.0.38";
 const http = require("http");
 const url = require("url");
 const myEmitter = require("./myEmitter");
@@ -81,7 +81,7 @@ myEmitter.on("comparisons", async (data) => {
 
 
 server.listen(8081, () => {
-    console.log('10.0.0.50', 8081, '(Listening)');
+    console.log(IP_ADDRESS, 8081, '(Listening)');
     console.log('------------------');
 
 });

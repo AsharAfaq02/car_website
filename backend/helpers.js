@@ -25,10 +25,10 @@ car_model:\
 }\
 Follow the following rules strictly: \
 In interchage_base, insert the "+year+" "+vehicle+" "+part+".\
-Then, in the compatible_with section, only list cars from different brands and companies\
-that use an identical "+part+" as the "+year+" "+vehicle+". \
+Then, in the compatible_with section, list cars from various brands\
+that use functional equivelant "+part+" as the "+year+" "+vehicle+". \
 The first entry in this list should be the same as the interchange_base details.\
-For each of the other 9 cars, provide:\
+For each of the other 9 cars that use the same "+part+" design as the "+year+" "+vehicle+", provide:\
 'car_year': The year of the compatible car (must be an integer).\
 'car_brand': The brand of the compatible car.\
 'car_model': The model of the compatible car.\
@@ -40,7 +40,7 @@ Response Format: Provide only the JSON object as specified. Do not include any e
     const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
-    { "role": "system", "content": "find cars from different brands that only use the identical "+part+" as in the "+year+" "+vehicle+"." },
+    { "role": "system", "content": "you find different cars from various brands that use a functional equivelant "+part+" as the one in the "+year+" "+vehicle+". Make sure that you do not return parts that are not functional equivelants. Then you return a JSON with information about those cars" },
     { "role": "user", "content": content_string }
     ]});
     gpt_output = completion.choices[0].message['content']

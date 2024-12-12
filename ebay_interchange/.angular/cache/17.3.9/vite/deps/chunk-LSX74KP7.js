@@ -302,6 +302,7 @@ function _isTestEnvironment() {
 }
 
 // node_modules/@angular/cdk/fesm2022/keycodes.mjs
+var BACKSPACE = 8;
 var TAB = 9;
 var ENTER = 13;
 var SHIFT = 16;
@@ -317,6 +318,7 @@ var LEFT_ARROW = 37;
 var UP_ARROW = 38;
 var RIGHT_ARROW = 39;
 var DOWN_ARROW = 40;
+var DELETE = 46;
 var ZERO = 48;
 var NINE = 57;
 var A = 65;
@@ -5014,6 +5016,7 @@ export {
   getRtlScrollAxisType,
   _getEventTarget,
   _isTestEnvironment,
+  BACKSPACE,
   TAB,
   ENTER,
   ESCAPE,
@@ -5022,6 +5025,7 @@ export {
   UP_ARROW,
   RIGHT_ARROW,
   DOWN_ARROW,
+  DELETE,
   A,
   hasModifierKey,
   coerceBooleanProperty,
@@ -5042,6 +5046,8 @@ export {
   MatCommonModule,
   _ErrorStateTracker,
   ErrorStateMatcher,
+  MAT_RIPPLE_GLOBAL_OPTIONS,
+  MatRippleModule,
   MAT_OPTION_PARENT_COMPONENT,
   MAT_OPTGROUP,
   MatOptgroup,
@@ -5049,6 +5055,7 @@ export {
   MatOption,
   _countGroupLabelsBeforeOption,
   _getOptionScrollPosition,
-  MatOptionModule
+  MatOptionModule,
+  MatRippleLoader
 };
-//# sourceMappingURL=chunk-TSH3QZDT.js.map
+//# sourceMappingURL=chunk-LSX74KP7.js.map
