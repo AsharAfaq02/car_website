@@ -8,43 +8,77 @@
       <form id="passwordForm" class="text-center" (submit) = "searchCarSubmit()" [formGroup]="form_search">
           <div class="row justify-content-center">
             <div class="col-auto">
+
+
               <div class="form-group">
                 <label for="year">Year</label>
                 <input [value] = "year" formControlName="year" type="text"
                  id="year" class="form-control" aria-describedby="passwordHelpInline" required>
                 </div>
               </div>
+
+
             <div class="col-auto">
               <div class="form-group">
                 <label for="make">Make</label>
-                <input [value] = "make" formControlName="make" type="text" id="make" class="form-control" aria-describedby="passwordHelpInline" required>
-              </div>
+                <input 
+                [formControl]="searchControlMake" 
+                formControlName="make" 
+                type="text" 
+                id="make" 
+                class="form-control" 
+                aria-describedby="passwordHelpInline" 
+                required 
+                [matAutocomplete]="autoMake">
+                <mat-autocomplete #autoMake="matAutocomplete">
+                  <mat-option *ngFor="let suggestions of MakeSuggestions" [value]="suggestions">
+                   {{suggestions}}
+                  </mat-option>
+                </mat-autocomplete>
+   
+
+
+            </div>
             </div>
           <div class="col-auto">
             <div class="form-group">
               <label for="model">Model</label>
-              <input [value] = "model" formControlName="model" type="text" id="model" class="form-control" aria-describedby="passwordHelpInline" required>
-            </div>
+              <input 
+              [formControl]="searchControlModel" 
+              formControlName="model" 
+              type="text" 
+              id="model" 
+              class="form-control" 
+              aria-describedby="passwordHelpInline" 
+              required 
+              [matAutocomplete]="autoModel">
+              <mat-autocomplete #autoModel="matAutocomplete">
+                <mat-option *ngFor="let suggestions of ModelSuggestions" [value]="suggestions">
+                 {{suggestions}}
+                </mat-option>
+              </mat-autocomplete>           
+             </div>
           </div>
         <div class="col-auto">
           <div class="form-group">
             <label for="part">Part</label>
-            <input [value] = "part" formControlName="part" type="text" id="part" class="form-control" aria-describedby="passwordHelpInline" required>
+            <input 
+            [formControl]="searchControlPart" 
+            formControlName="part" 
+            type="text" 
+            id="part" 
+            class="form-control" 
+            aria-describedby="passwordHelpInline" 
+            required 
+            [matAutocomplete]="autoPart">
+            <mat-autocomplete #autoPart="matAutocomplete">
+              <mat-option *ngFor="let suggestions of PartSuggestions" [value]="suggestions">
+               {{suggestions}}
+              </mat-option>
+            </mat-autocomplete>   
           </div>
         </div>
-        <div *ngIf="suggestions">
-          <div class="col-auto">
-            <div class="form-group">
-              <label for="Suggestions">Add specifications</label>
-              <input formControlName="suggest" type="text" id="suggest" class="form-control" aria-describedby="passwordHelpInline" required>  
-              
-                <mat-chip  *ngFor="let x of suggestions" color="primary">
-                  {{ x }}
-                </mat-chip>
-
-              </div>
-          </div>
-        </div>
+        
       </div>
        <div *ngIf="invalidForm()" class="alert alert-danger" role="alert">Incomplete form</div>
          <div *ngIf="submitted()" class="alert alert-success" role="alert">Searching Interchanges for {{queryStr}}</div>
@@ -55,7 +89,7 @@
 
         <div *ngIf = "ebayData_1.length > 1">
 
-          <button onClick="window.location.reload();">Refresh Page</button>
+          <button (click)="refreshPage()">Refresh Page</button>
 
           </div>
         </div>
@@ -69,7 +103,7 @@
       <div *ngIf="err" class="alert alert-danger" role="alert">
             {{err}}
       </div>
-       <div *ngIf=" suggestions && ebayData_1.length < 1 && submitted()">
+       <div *ngIf="ebayData_1.length < 1 && submitted()">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       </div>
 

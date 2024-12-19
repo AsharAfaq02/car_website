@@ -26,21 +26,23 @@ car_model:\
 Follow the following rules strictly: \
 In interchage_base, insert the "+year+" "+vehicle+" "+part+".\
 Then, in the compatible_with section, list cars from various brands\
-that use functional equivelant "+part+" as the "+year+" "+vehicle+". \
+that have the same equipment manucafturer, and return the "+part+" from a car that the "+year+" "+vehicle+" also uses.\
+compare the Size and dimensions, Material and construction, Performance specifications (e.g., power, torque, speed), Connection points (bolt pattern, electrical connectors, etc.), Weight.\
 The first entry in this list should be the same as the interchange_base details.\
-For each of the other 9 cars that use the same "+part+" design as the "+year+" "+vehicle+", provide:\
+For each of the other 9 cars that use the same "+part+" equivelant to the "+year+" "+vehicle+", provide:\
 'car_year': The year of the compatible car (must be an integer).\
 'car_brand': The brand of the compatible car.\
 'car_model': The model of the compatible car.\
 Constraints:\
 No Repeats: Ensure that there are no duplicate cars in the compatible_with list.\
 Car Year: The car_year of each compatible car should not be greater than the current year.\
-Response Format: Provide only the JSON object as specified. Do not include any extra text, tags, or quotations. Write perfect JSON object that is parseable."
+Accuracy: There should never be any cars that do not use a matching part as the one provided. If so, do not input it.\
+Response Format: Provide only the JSON object, where I can parse this valid JSON, and no other quotations, spaces, dots or extra symbols or descriptors. Write perfect JSON object only, and no `` or quotations added."
 
     const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
-    { "role": "system", "content": "you find different cars from various brands that use a functional equivelant "+part+" as the one in the "+year+" "+vehicle+". Make sure that you do not return parts that are not functional equivelants. Then you return a JSON with information about those cars" },
+    { "role": "system", "content": "you find different cars from various brands that are built by the same equipment manufacturer and use a functional equivelant "+part+" as the one in the "+year+" "+vehicle+". Make sure that you do not return parts that are not functional equivelants. Then you return a VALID JSON with information about those cars ONLY." },
     { "role": "user", "content": content_string }
     ]});
     gpt_output = completion.choices[0].message['content']
@@ -55,31 +57,8 @@ Response Format: Provide only the JSON object as specified. Do not include any e
   }
 }
 }
-
-async function suggestion(year, make, model, part){
-    try{
-        console.log('fetching suggestions from chatGPT')
-        content_string = 
-  "Return a list of 6 single word part suggestions to append to an eBay search query for the item described as "+year+" "+make+" "+model+" "+part+".\
-  The suggestions should include generic attributes such as color, kit, specific components, or area of install. Make sure to list searches relevant to\
-  the year of the car as well Output only the list of suggestions, with no additional text, numbering, or letters.";  
-        const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [
-        { "role": "system", "content": "You return suggestions to make a query about car parts more specific" },
-        { "role": "user", "content": content_string }
-        ]});
-        gpt_output = await completion.choices[0].message['content'];
-        gpt_array = gpt_output.split(',')  
-        gpt_array = {'suggestions': gpt_array}
-
-        return gpt_array;
-      
-      }catch(error){}
-}
   
-async function mainInterchange(year, make, model, part, suggestion) {
-  let mainQuery = part + " " + suggestion;
+async function mainInterchange(year, make, model, part) {
   let msSent = 0;
   let msRecieved = 0;
   let msComparisonSent = 0;
@@ -88,7 +67,7 @@ async function mainInterchange(year, make, model, part, suggestion) {
   const comparisonWorker = new Worker("./TitleComparisonThread.js");
 
   try {
-      let data = await partGPT(year, make, model, part + " " + suggestion);
+      let data = await partGPT(year, make, model, part);
 
       if (data) {
           for (let x = 0; x < data["compatible_with"].length; x++) {
@@ -101,8 +80,7 @@ async function mainInterchange(year, make, model, part, suggestion) {
 
               let dataToEbayThread = [
                   ebaySearchPrompt,
-                  part + " " + suggestion,
-                  mainQuery,
+                  part
               ];
               worker.postMessage(dataToEbayThread);
               msSent++;
@@ -111,7 +89,7 @@ async function mainInterchange(year, make, model, part, suggestion) {
   } catch (error) {}
 
   worker.on("message", (result) => {
-    if (result[3] == "done") {
+    if (result[2] == "done") {
         msRecieved++;
     }
     myEmitter.emit("event", result);
@@ -147,4 +125,4 @@ myEmitter.emit("comparisons", result[0]);
   });
 }
 
-module.exports = { mainInterchange, suggestion };
+module.exports = { mainInterchange };

@@ -33,13 +33,12 @@ async function ebay_search(build, part) {
 
 parentPort.on("message", async (data) => {
     let entry = data[0] + " " + data[1];
-    let mainQuery = data[2];
     await ebay_search(data[0], data[1]).then((data) => {
         totals = data["total"];
         if (totals == 0) {
-            parentPort.postMessage([entry, "no-data", mainQuery, "done"]);
+            parentPort.postMessage([entry, "no-data", "done"]);
         } else if (totals > 0) {
-            parentPort.postMessage([entry, data, mainQuery, "done"]);
+            parentPort.postMessage([entry, data, "done"]);
         }
     });
 });
